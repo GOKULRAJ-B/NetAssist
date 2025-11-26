@@ -1,0 +1,196 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom right,#0f2027,#203a43,#2c5364);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    
+}
+.page-title {
+    text-align: center;
+    color: white;
+    padding: 5px 0 10px;
+    font-size: 24px;
+}
+.title {
+    text-align: center;
+    font-weight: bold;
+    padding: 15px;
+    background: #2a6d8f; /* Lighter blue for the title */
+    color: white;
+    cursor: move;
+    user-select: none;
+    border-radius: 10px;
+}
+.footer {
+    background-color: #457b9d;
+    text-align: center;
+    padding: 10px 10px;
+    font-size: 14px;
+    color: #ffffff;
+    margin-top: auto;
+  }
+.chat-container {
+    position: absolute;
+    top: 75px;
+    right: 370px;
+    width: 900px;
+    height: 550px;
+    /*background: #2a3d52; 
+    border: 1px solid #1f2a37; 
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);*/
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column; 
+
+}
+
+.chat-box {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: white; /* Dark muted blue for chatbox */
+    border-radius: 8px;
+    margin-bottom: 10px;
+    color: white; /* White text in the chatbox */
+}
+
+.input-area {
+    display: flex;
+    gap: 15px;
+    padding: 10px;
+    background-color: #2b4f67; /* Slightly lighter dark blue for input area */
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #4e6a77; 
+    font-size: 18px;
+    background-color: #5f7c8a; 
+    color: white; 
+    box-sizing: border-box;
+}
+
+.input-area input::placeholder {
+    color: white; /* White color for the input placeholder text */
+}
+
+.input-area button {
+    padding: 12px 20px;
+    border: none;
+    background: #ff6f61; /* Coral color for button */
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.input-area button:hover {
+    background: #e84a3d; /* Slightly darker coral for hover effect */
+}
+
+.message.user {
+    text-align: right;
+    margin-bottom: 15px;
+    color: black; /* Bright blue for user messages */
+    font-weight: 500;
+}
+
+.message.bot {
+    text-align: left;
+    margin-bottom: 15px;
+    color: black; /* Light green for bot messages */
+    font-weight: 500;
+}
+
+.feedback {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.feedback-btn {
+    margin: 0 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 20px;
+}
+
+.resize-handle {
+    width: 15px;
+    height: 15px;
+    background: #ff6f61; /* Matching resize handle color with button */
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: se-resize;
+}
+
+.prompt-history {
+    position: absolute;
+    top: 75px;
+    right: 50px;  /* Changed from left: 50px */
+    width: 280px;
+    height: 550px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+    color: white;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+
+.prompt-history h3 {
+    margin-top: 0;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.prompt-history ul {
+    list-style-type: none;
+    padding: 10px;
+    margin: 10px;
+}
+
+.prompt-history li {
+    margin-bottom: 8px;
+    background-color: rgba(255,255,255,0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    word-wrap: break-word;
+}
+.copy-btn {
+    color: #333; /* Default color */
+    transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+.copy-btn.copied {
+    color: #28a745 !important; /* Green color when copied */
+}
+
+.copy-btn:hover {
+    color: #ff4500; /* Hover effect color */
+}
+

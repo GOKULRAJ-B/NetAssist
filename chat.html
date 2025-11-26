@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <h1 class="page-title">Welcome to Your Networking Chatbot</h1>
+    <meta charset="UTF-8">
+    <title>Networking Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="title">💬 Chat with Networking Assistant</div>
+        <div id="chat-box" class="chat-box"></div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message here..." />
+            <button id="send-btn">Send</button>
+        </div>
+        <div class="resize-handle"></div> 
+    </div>
+
+    <!-- New container for user prompts -->
+    <div class="prompt-history">
+        <h3>Prompt History</h3>
+        <ul id="prompt-list"></ul>
+    </div>
+
+    <footer class="footer">
+        <p>Need help with something specific like IPv6, subnetting, or port scanning? Just type it in the box!</p>
+        <p>&copy; 2025 Networking Bot | All rights reserved.</p>
+    </footer>
+
+    <script>
+        let lastUserMessage = "";
+        const chatContainer = document.querySelector('.chat-container');
+        const resizeHandle = document.querySelector('.resize-handle');
+        let isResizing = false;
+
+        resizeHandle.addEventListener('mousedown', () => {
+            isResizing = true;
+            document.addEventListener('mousemove', resizeChatbox);
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', resizeChatbox);
+            });
+        });
+
+        function resizeChatbox(e) {
+            if (isResizing) {
+                const newWidth = e.clientX - chatContainer.offsetLeft;
+                const newHeight = e.clientY - chatContainer.offsetTop;
+                if (newWidth > 300 && newHeight > 300) {
+                    chatContainer.style.width = `${newWidth}px`;
+                    chatContainer.style.height = `${newHeight}px`;
+                }
+            }
+        }
+
+        document.getElementById("send-btn").addEventListener("click", e => {
+            e.preventDefault();
+            sendMessage();
+        });
+
+        document.getElementById("user-input").addEventListener("keypress", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const inputField = document.getElementById("user-input");
+            const message = inputField.value.trim();
+            if (!message) return;
+            lastUserMessage = message;
+            appendMessage("user", message);
+            appendPrompt(message);
+            inputField.value = "";
+
+            fetch("/chat", {
+                method: "POST",
+                body: JSON.stringify({ message }),
+                headers: { "Content-Type": "application/json" },
+            })
+            .then(res => res.json())
+            .then(data => typeMessage("bot", data.response))
+            .catch(err => console.error(err));
+        }
+
+        function appendPrompt(prompt) {
+            const promptList = document.getElementById("prompt-list");
+            const item = document.createElement("li");
+            item.textContent = prompt;
+            promptList.appendChild(item);
+        }
+
+        function appendMessage(sender, message) {
+            const chatBox = document.getElementById("chat-box");
+            const messageElem = document.createElement("div");
+            messageElem.className = `message ${sender}`;
+            messageElem.innerHTML = message;
+            chatBox.appendChild(messageElem);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            if (sender === 'bot') {
+                const feedbackDiv = document.createElement("div");
+                feedbackDiv.className = "feedback";
+                feedbackDiv.innerHTML = `
+                    <button class="feedback-btn" onclick="sendFeedback('up', this)">👍</button>
+                    <button class="feedback-btn" onclick="sendFeedback('down', this)">👎</button>
+                    <button class="copy-btn" onclick="copyResponse(this)">📋</button>
+                `;
+                chatBox.appendChild(feedbackDiv);
+            }
+        }
+
+        function copyResponse(button) {
+            const responseElem = button.closest('.feedback').previousElementSibling;
+            const textToCopy = responseElem.innerText;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    // visually indicate success
+                    button.style.color = '#28a745'; // green color
+                })
+                .catch(err => console.error(err));
+        }
+
+        function typeMessage(sender, fullText) {
+            const chatBox = document.getElementById("chat-box");
+            const messageElement = document.createElement("div");
+            messageElement.className = `message ${sender}`;
+            const tempText = fullText.replace(/<[^>]+>/g, '');
+            messageElement.textContent = '';
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            let i = 0;
+            const speed = 5;
+            function typeChar() {
+                if (i < tempText.length) {
+                    messageElement.textContent += tempText.charAt(i++);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    setTimeout(typeChar, speed);
+                } else {
+                    messageElement.innerHTML = fullText;
+                    const feedbackDiv = document.createElement("div");
+                    feedbackDiv.className = "feedback";
+                    feedbackDiv.innerHTML = `
+                        <button class="feedback-btn" onclick="sendFeedback('up', this)">👍</button>
+                        <button class="feedback-btn" onclick="sendFeedback('down', this)">👎</button>
+                        <button class="copy-btn" onclick="copyResponse(this)">📋</button>
+                    `;
+                    chatBox.appendChild(feedbackDiv);
+                }
+            }
+            typeChar();
+        }
+
+        function sendFeedback(feedback, button) {
+            if (feedback === 'up') button.style.backgroundColor = 'lightblue';
+            else button.style.backgroundColor = 'lightcoral';
+            fetch("/feedback", {
+                method: "POST",
+                body: JSON.stringify({ feedback, message: lastUserMessage }),
+                headers: { "Content-Type": "application/json" },
+            });
+        }
+
+        let isDragging = false, offsetX, offsetY;
+        chatContainer.addEventListener('mousedown', e => {
+            if (e.target.classList.contains('resize-handle')) return;
+            isDragging = true;
+            offsetX = e.clientX - chatContainer.offsetLeft;
+            offsetY = e.clientY - chatContainer.offsetTop;
+            document.addEventListener('mousemove', dragChatbox);
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                document.removeEventListener('mousemove', dragChatbox);
+            });
+        });
+        function dragChatbox(e) {
+            if (isDragging) {
+                chatContainer.style.left = `${e.clientX - offsetX}px`;
+                chatContainer.style.top = `${e.clientY - offsetY}px`;
+            }
+        }
+    </script>
+</body>
+</html>
