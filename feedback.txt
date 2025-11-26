@@ -1,0 +1,21 @@
+Message: what is networking
+Feedback: up
+
+Message: networking
+Feedback: up
+
+Message: tell me what is networking
+Feedback: up
+
+Message: what is networking router
+Feedback: up
+
+Message: what is hub and how it is different from stwitch
+Feedback: up
+
+Message: what is hub and how it is different from stwitch
+Feedback: up
+
+Message: what is hub and how it is different from stwitch
+Feedback: down
+
